@@ -46,35 +46,7 @@
     [self drawRowOfBall:_numberOfBallsCol andnumberBallsRow:_numberOfBallsRow];
     [self freeStyle];
 }
--(void) leftToRight
-{
-//    NSLog(@"%d, %d",_lastOnLEDLeft,_lastOnLEDRight);
-    
-    if (_lastOnLEDRight==_lastOnLEDLeft+1 && _lastOnLEDRight!=0)
-    {
-        [_timer1 invalidate];
-       _timer1 = [NSTimer scheduledTimerWithTimeInterval:0.5 target:self selector:@selector(freeStyle) userInfo:nil repeats:true];
-        
-    }
-    else
-    {
-        if (_lastOnLEDLeft != -1)
-        {
-            [self turnOFFLed:_lastOnLEDLeft];
-        }
-    
-        if (_lastOnLEDLeft != _numberOfBallsRow*_numberOfBallsRow - 1)
-        {
-                _lastOnLEDLeft++;
-        }
-        else
-        {
-            _lastOnLEDLeft = 0;
-        
-        }
-        [self turnONLed:_lastOnLEDLeft];
-    }
-}
+
 -(void) rightToLeft
 {
     if (_lastOnLEDRight==_lastOnLEDLeft+1 && _lastOnLEDRight!=0)
