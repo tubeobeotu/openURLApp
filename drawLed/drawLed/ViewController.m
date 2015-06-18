@@ -42,11 +42,39 @@
     
     
     //_timer2 = [NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(runningLED2) userInfo:nil repeats:true];
-   
+    
     [self drawRowOfBall:_numberOfBallsCol andnumberBallsRow:_numberOfBallsRow];
     [self freeStyle];
 }
-
+-(void) leftToRight
+{
+    //    NSLog(@"%d, %d",_lastOnLEDLeft,_lastOnLEDRight);
+    
+    if (_lastOnLEDRight==_lastOnLEDLeft+1 && _lastOnLEDRight!=0)
+    {
+        [_timer1 invalidate];
+        _timer1 = [NSTimer scheduledTimerWithTimeInterval:0.5 target:self selector:@selector(freeStyle) userInfo:nil repeats:true];
+        
+    }
+    else
+    {
+        if (_lastOnLEDLeft != -1)
+        {
+            [self turnOFFLed:_lastOnLEDLeft];
+        }
+        
+        if (_lastOnLEDLeft != _numberOfBallsRow*_numberOfBallsRow - 1)
+        {
+            _lastOnLEDLeft++;
+        }
+        else
+        {
+            _lastOnLEDLeft = 0;
+            
+        }
+        [self turnONLed:_lastOnLEDLeft];
+    }
+}
 -(void) rightToLeft
 {
     if (_lastOnLEDRight==_lastOnLEDLeft+1 && _lastOnLEDRight!=0)
@@ -63,7 +91,7 @@
         {
             [self turnOFFLed:_lastOnLEDRight];
         }
-    
+        
         if (_lastOnLEDRight != 0)
         {
             _lastOnLEDRight--;
@@ -77,11 +105,11 @@
 }
 -(void)freeStyle
 {
-
+    
     if(_numberBallCurrent < _boundTOPRIGHT )
     {
         _numberBallCurrent++;
-       
+        
     }
     else if(_numberBallCurrent<_boundBOTRIGHT && _currentRow != _subRow-1)
     {
@@ -111,12 +139,12 @@
         _subRow=_subRow-2;
         _subCol=_subCol-2;
         
-       
+        
     }
     [self turnONLed:_numberBallCurrent];
     
     
-
+    
     
     
     
@@ -127,7 +155,7 @@
     
     [self leftToRight];
     [self rightToLeft];
-
+    
 }
 -(void)turnONLed:(int)index
 {
@@ -163,7 +191,7 @@
     UIImageView* ball=[[UIImageView alloc]initWithImage:[UIImage imageNamed:@"grey"]];
     ball.center=CGPointMake(X, Y);
     ball.tag=Tag;
-   // NSLog(@"%1.0f",ball.bounds.size.width);
+    // NSLog(@"%1.0f",ball.bounds.size.width);
     [self.view addSubview:ball];
 }
 -(CGFloat)spaceBetweenBallCenterWhenNunberBallIsKnown:(int)n
@@ -175,7 +203,7 @@
     return (self.view.bounds.size.height-2*_margin)/(n-1);
 }
 -(void)drawRowOfBall:(int)numberBallsCol
-     andnumberBallsRow:(int)numberBallsRow
+   andnumberBallsRow:(int)numberBallsRow
 {
     CGFloat spaceCol=[self spaceBetweenBallCenterWhenNunberBallIsKnown:numberBallsCol];
     CGFloat spaceRow=[self spaceYBetweenBallCenterWhenNunberBallIsKnown:numberBallsRow];
