@@ -99,7 +99,7 @@
     {
         _numberBallCurrent=_numberBallCurrent-_numberOfBallsCol;
     }
-    else if (_numberOfBallsCol>1)
+    else if (_subCol>1)
     {
         _boundTOPLEFT=_boundTOPLEFT+_numberOfBallsCol+1;
         _boundTOPRIGHT=_boundTOPRIGHT+_numberOfBallsCol-1;
