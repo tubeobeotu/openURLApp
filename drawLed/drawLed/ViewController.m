@@ -25,7 +25,8 @@
     int _boundTOPLEFT,_boundTOPRIGHT,_boundBOTLEFT,_boundBOTRIGHT,_numberBallCurrent;
     int _currentCol,_currentRow,_subRow,_subCol;
 }
-//linh tinh
+
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     _margin=40.0;
@@ -42,7 +43,7 @@
     
     
     
-    //_timer2 = [NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(runningLED2) userInfo:nil repeats:true];
+    
    
     [self drawRowOfBall:_numberOfBallsCol andnumberBallsRow:_numberOfBallsRow];
     [self freeStyle];
