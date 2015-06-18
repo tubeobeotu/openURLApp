@@ -25,6 +25,8 @@
     int _boundTOPLEFT,_boundTOPRIGHT,_boundBOTLEFT,_boundBOTRIGHT,_numberBallCurrent;
     int _currentCol,_currentRow,_subRow,_subCol;
 }
+
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     _margin=40.0;
