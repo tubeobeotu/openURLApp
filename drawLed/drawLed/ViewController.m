@@ -15,27 +15,36 @@
 @implementation ViewController
 {
     CGFloat _margin,_marginY;
-    int _numberOfBalls,_numberOfBallsY;
+    int _numberOfBallsRow,_numberOfBallsCol;
     CGFloat _space;
     CGFloat _ballDiameter;
     NSTimer* _timer1;
     NSTimer* _timer2;
     int _lastOnLEDLeft,_lastOnLEDRight,_lastOnLEDfreeLeft,_lastOnLEDfreeRight;
     int _tag;
-    
+    int _boundTOPLEFT,_boundTOPRIGHT,_boundBOTLEFT,_boundBOTRIGHT,_numberBallCurrent;
+    int _currentCol,_currentRow,_subRow,_subCol;
 }
 - (void)viewDidLoad {
     [super viewDidLoad];
     _margin=40.0;
     _ballDiameter=24.0;
-    _numberOfBalls=5;
-    _numberOfBallsY=5;
+    _numberOfBallsRow=11;
+    _numberOfBallsCol=11;
+    _boundTOPLEFT=1;
+    _boundTOPRIGHT=_numberOfBallsCol;
+    _boundBOTRIGHT=_numberOfBallsRow*_numberOfBallsCol;
+    _boundBOTLEFT=_boundBOTRIGHT-_numberOfBallsCol+1;
+    _subRow=_numberOfBallsRow;
+    _subCol=_numberOfBallsCol;
+    _timer1 = [NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(freeStyle) userInfo:nil repeats:true];
     
     
-    _timer1 = [NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(runningLED) userInfo:nil repeats:true];
+    
     //_timer2 = [NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(runningLED2) userInfo:nil repeats:true];
    
-    [self drawRowOfBall:_numberOfBalls andNumberBallsY:_numberOfBallsY];
+    [self drawRowOfBall:_numberOfBallsCol andnumberBallsRow:_numberOfBallsRow];
+    [self freeStyle];
 }
 -(void) leftToRight
 {
@@ -44,7 +53,7 @@
     if (_lastOnLEDRight==_lastOnLEDLeft+1 && _lastOnLEDRight!=0)
     {
         [_timer1 invalidate];
-       _timer1 = [NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(freeStyle) userInfo:nil repeats:true];
+       _timer1 = [NSTimer scheduledTimerWithTimeInterval:0.5 target:self selector:@selector(freeStyle) userInfo:nil repeats:true];
         
     }
     else
@@ -54,7 +63,7 @@
             [self turnOFFLed:_lastOnLEDLeft];
         }
     
-        if (_lastOnLEDLeft != _numberOfBalls*_numberOfBallsY - 1)
+        if (_lastOnLEDLeft != _numberOfBallsRow*_numberOfBallsRow - 1)
         {
                 _lastOnLEDLeft++;
         }
@@ -89,44 +98,54 @@
         }
         else
         {
-            _lastOnLEDRight = _numberOfBalls*_numberOfBallsY - 1;
+            _lastOnLEDRight = _numberOfBallsRow*_numberOfBallsRow - 1;
         }
         [self turnONLed:_lastOnLEDRight];
     }
 }
 -(void)freeStyle
 {
-    if (_lastOnLEDfreeLeft < _numberOfBalls*_numberOfBallsY)
-    {
-        
-    
-        if (_lastOnLEDfreeLeft != -1)
-        {
-        [   self turnOFFLed:_lastOnLEDfreeLeft];
-        }
-    
-        if (_lastOnLEDfreeLeft < _numberOfBalls)
-        {
-            _lastOnLEDfreeLeft++;
-        }
-        else if(_lastOnLEDfreeLeft < _numberOfBalls*_numberOfBallsY-_numberOfBallsY-1)
-        {
-            _lastOnLEDfreeLeft=_lastOnLEDfreeLeft+_numberOfBallsY-1;
-        }
-        else
-        {
-            _lastOnLEDfreeLeft++;
-        }
 
-        [self turnONLed:_lastOnLEDfreeLeft];
-    }
-    else
+    if(_numberBallCurrent < _boundTOPRIGHT )
     {
-        [_timer1 invalidate];
-        [self turnOFFLed:_lastOnLEDfreeLeft];
-        _lastOnLEDfreeLeft=0;
-        _timer1 = [NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(runningLED) userInfo:nil repeats:true];
+        _numberBallCurrent++;
+       
     }
+    else if(_numberBallCurrent<_boundBOTRIGHT && _currentRow != _subRow-1)
+    {
+        _numberBallCurrent=_numberBallCurrent+_numberOfBallsCol;
+        
+        _currentRow++;
+    }
+    else if(_numberBallCurrent>_boundBOTLEFT && _currentCol !=_subCol-1)
+    {
+        _numberBallCurrent=_numberBallCurrent-1;
+        _currentCol++;
+        
+    }
+    else if (_numberBallCurrent>_boundTOPLEFT+_numberOfBallsCol )
+    {
+        _numberBallCurrent=_numberBallCurrent-_numberOfBallsCol;
+    }
+    else if (_numberOfBallsCol>1)
+    {
+        _boundTOPLEFT=_boundTOPLEFT+_numberOfBallsCol+1;
+        _boundTOPRIGHT=_boundTOPRIGHT+_numberOfBallsCol-1;
+        
+        _boundBOTRIGHT=_boundBOTRIGHT-_numberOfBallsCol-1;
+        _boundBOTLEFT=_boundBOTLEFT-_numberOfBallsCol+1;
+        _numberBallCurrent=_boundTOPLEFT;
+        _currentRow=0;
+        _subRow=_subRow-2;
+        _subCol=_subCol-2;
+        
+       
+    }
+    [self turnONLed:_numberBallCurrent];
+    
+    
+
+    
     
     
 }
@@ -183,18 +202,18 @@
 {
     return (self.view.bounds.size.height-2*_margin)/(n-1);
 }
--(void)drawRowOfBall:(int)numberBallsX
-     andNumberBallsY:(int)numberBallsY
+-(void)drawRowOfBall:(int)numberBallsCol
+     andnumberBallsRow:(int)numberBallsRow
 {
-    CGFloat spaceX=[self spaceBetweenBallCenterWhenNunberBallIsKnown:numberBallsX];
-    CGFloat spaceY=[self spaceYBetweenBallCenterWhenNunberBallIsKnown:numberBallsY];
-    for (int i=0; i<numberBallsY;i++)
+    CGFloat spaceCol=[self spaceBetweenBallCenterWhenNunberBallIsKnown:numberBallsCol];
+    CGFloat spaceRow=[self spaceYBetweenBallCenterWhenNunberBallIsKnown:numberBallsRow];
+    for (int i=0; i<numberBallsRow;i++)
     {
-        for (int j=0; j<numberBallsX; j++)
+        for (int j=0; j<numberBallsCol; j++)
         {
             _tag=_tag+1;
-            [self placeBallAtX:_margin+j*spaceX
-                          andY:_margin+i*spaceY
+            [self placeBallAtX:_margin+j*spaceCol
+                          andY:_margin+i*spaceRow
                        withTag:_tag+100];
             
         }
