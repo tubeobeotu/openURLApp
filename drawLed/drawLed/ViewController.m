@@ -41,9 +41,8 @@
     _subCol=_numberOfBallsCol;
     _timer1 = [NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(freeStyle) userInfo:nil repeats:true];
     
+    NSLog(@"change code");
     
-    
-    //_timer2 = [NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(runningLED2) userInfo:nil repeats:true];
     
     [self drawRowOfBall:_numberOfBallsCol andnumberBallsRow:_numberOfBallsRow];
     [self freeStyle];
