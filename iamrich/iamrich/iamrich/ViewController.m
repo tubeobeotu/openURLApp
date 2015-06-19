@@ -25,6 +25,7 @@
 
 - (void) viewWillAppear:(BOOL)animated
 {
+    //comment
     [super viewWillAppear:animated];
     NSLog(@"ruby's alpha = %1.0f", self.ruby.alpha);
     [UIView animateWithDuration:4 animations:^{
