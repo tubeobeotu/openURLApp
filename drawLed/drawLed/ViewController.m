@@ -24,6 +24,8 @@
     int _tag;
     int _boundTOPLEFT,_boundTOPRIGHT,_boundBOTLEFT,_boundBOTRIGHT,_numberBallCurrent;
     int _currentCol,_currentRow,_subRow,_subCol;
+    int _rectangle;
+    NSString* _status;
 }
 
 
@@ -31,21 +33,25 @@
     [super viewDidLoad];
     _margin=40.0;
     _ballDiameter=24.0;
-    _numberOfBallsRow=11;
-    _numberOfBallsCol=11;
+    _numberOfBallsRow=10;
+    _numberOfBallsCol=10;
     _boundTOPLEFT=1;
     _boundTOPRIGHT=_numberOfBallsCol;
     _boundBOTRIGHT=_numberOfBallsRow*_numberOfBallsCol;
     _boundBOTLEFT=_boundBOTRIGHT-_numberOfBallsCol+1;
     _subRow=_numberOfBallsRow;
     _subCol=_numberOfBallsCol;
-    _timer1 = [NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(freeStyle) userInfo:nil repeats:true];
-    
-    NSLog(@"change code");
+    _rectangle=0;
+    _status=@"left";
     
     
     [self drawRowOfBall:_numberOfBallsCol andnumberBallsRow:_numberOfBallsRow];
-    [self freeStyle];
+    _numberBallCurrent=[self getStartBall:_boundTOPLEFT andboundTopRight:_boundTOPRIGHT andboundBotLeft:_boundBOTLEFT andboundBotRight:_boundBOTRIGHT];
+
+    
+    
+    //    _numberBallCurrent=0;
+    _timer1 = [NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(reversFreeStyle) userInfo:nil repeats:true];
 }
 -(void) leftToRight
 {
@@ -54,7 +60,7 @@
     if (_lastOnLEDRight==_lastOnLEDLeft+1 && _lastOnLEDRight!=0)
     {
         [_timer1 invalidate];
-        _timer1 = [NSTimer scheduledTimerWithTimeInterval:0.5 target:self selector:@selector(freeStyle) userInfo:nil repeats:true];
+        _timer1 = [NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(freeStyle) userInfo:nil repeats:true];
         
     }
     else
@@ -104,6 +110,105 @@
         [self turnONLed:_lastOnLEDRight];
     }
 }
+-(int) getStartBall:(int)boundTopLeft
+   andboundTopRight:(int) boundTopRight
+    andboundBotLeft:(int)boundBotLeft
+   andboundBotRight:(int) boundBotRight
+{
+    while (true)
+    {
+        if((boundTopLeft-boundTopRight)==-1 || (boundTopLeft - boundBotLeft)==-_numberOfBallsCol)
+        {
+            break;
+        }
+        //NSLog(@"%d %d %d %d",boundTopLeft,boundTopRight,boundBotLeft,boundBotRight);
+        _rectangle++;
+//        NSLog(@"%d",boundTopLeft);
+        boundTopLeft=boundTopLeft+_numberOfBallsCol+1;
+        boundTopRight=boundTopRight+_numberOfBallsCol-1;
+    
+        boundBotLeft=boundBotLeft-_numberOfBallsCol+1;
+        boundBotRight=boundBotRight-_numberOfBallsCol-1;
+    
+        
+    }
+//    NSLog(@"%d",boundTopLeft);
+    return boundTopLeft+_numberOfBallsCol;
+}
+
+-(void) reversFreeStyle
+{
+    
+    
+    
+    if (_numberBallCurrent==1)
+    {
+        [_timer1 invalidate];
+    }
+    
+    int boundCurrentBotLeft=(_boundBOTLEFT-(_rectangle*_numberOfBallsCol)+_rectangle);
+    int boundCurrentBotRight=(_boundBOTRIGHT-(_rectangle*_numberOfBallsCol)-_rectangle);
+        
+    int boundCurrentTopLeft=(_boundTOPLEFT+(_rectangle*_numberOfBallsCol)+_rectangle);
+    int boundCurrentTopRight=(_boundTOPRIGHT+(_rectangle*_numberOfBallsCol)-_rectangle);
+    
+    
+    
+    
+    if (_numberBallCurrent == boundCurrentTopLeft)
+    {
+            _status=@"left";
+        
+        _numberBallCurrent--;
+        _rectangle--;
+    }
+    else if(_numberBallCurrent == boundCurrentBotLeft )
+    {
+        _status=@"bot";
+    }
+    else if(_numberBallCurrent == boundCurrentBotRight)
+    {
+        _status=@"right";
+    }
+    else if(_numberBallCurrent == boundCurrentTopRight)
+    {
+        _status=@"top";
+    }
+    
+    [self turnONLed:_numberBallCurrent];
+    
+    
+    
+    if ([_status isEqualToString:@"left"])
+    {
+        _numberBallCurrent=_numberBallCurrent+_numberOfBallsCol;
+        
+    }
+    else if ([_status isEqualToString:@"bot"])
+    {
+        
+        _numberBallCurrent++;
+        
+    }
+    else if([_status isEqualToString:@"right"])
+    {
+        
+        _numberBallCurrent=_numberBallCurrent - _numberOfBallsCol;
+    }
+    else if([_status isEqualToString:@"top"])
+    {
+        
+        _numberBallCurrent--;
+    }
+    [self turnONLed:_numberBallCurrent];
+    
+    
+    
+}
+
+
+
+
 -(void)freeStyle
 {
     
