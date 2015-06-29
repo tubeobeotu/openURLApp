@@ -157,7 +157,7 @@
     
     if (_numberBallCurrent == boundCurrentTopLeft)
     {
-            _status=@"left";
+        _status=@"left";
         
         _numberBallCurrent--;
         _rectangle--;
